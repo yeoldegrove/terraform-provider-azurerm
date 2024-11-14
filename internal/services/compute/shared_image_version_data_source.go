@@ -100,6 +100,48 @@ func dataSourceSharedImageVersion() *pluginsdk.Resource {
 				Computed: true,
 			},
 
+			"uefi_settings": {
+				Type:     pluginsdk.TypeList,
+				Computed: true,
+				Elem: &pluginsdk.Resource{
+					Schema: map[string]*pluginsdk.Schema{
+						"signature_template_names": {
+							Type:     pluginsdk.TypeList,
+							Computed: true,
+							Elem:     &pluginsdk.Schema{Type: pluginsdk.TypeString},
+						},
+						"additional_signatures": {
+							Type:     pluginsdk.TypeList,
+							Computed: true,
+							Elem: &pluginsdk.Resource{
+								Schema: map[string]*pluginsdk.Schema{
+									"db": {
+										Type:     pluginsdk.TypeList,
+										Computed: true,
+										Elem:     uefiKeySchema(),
+									},
+									"dbx": {
+										Type:     pluginsdk.TypeList,
+										Computed: true,
+										Elem:     uefiKeySchema(),
+									},
+									"kek": {
+										Type:     pluginsdk.TypeList,
+										Computed: true,
+										Elem:     uefiKeySchema(),
+									},
+									"pk": {
+										Type:     pluginsdk.TypeList,
+										Computed: true,
+										Elem:     uefiKeySchema(),
+									},
+								},
+							},
+						},
+					},
+				},
+			},            
+
 			"tags": commonschema.Tags(),
 		},
 	}
@@ -158,6 +200,10 @@ func dataSourceSharedImageVersionRead(d *pluginsdk.ResourceData, meta interface{
 			d.Set("os_disk_image_size_gb", osDiskImageSize)
 		}
 		return tags.FlattenAndSet(d, image.Tags)
+
+        if securityProfile := props.SecurityProfile; securityProfile != nil {
+			d.Set("uefi_settings", flattenUefiSettings(securityProfile.UefiSettings))
+		}
 	}
 	return nil
 }
