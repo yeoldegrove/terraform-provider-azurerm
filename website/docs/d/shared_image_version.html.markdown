@@ -58,6 +58,8 @@ The following attributes are exported:
 
 * `os_disk_image_size_gb` - The size of the OS disk snapshot (in Gigabytes) which was the source of this Shared Image Version.
 
+* `uefi_settings` - A `uefi_settings` block as documented below.
+
 * `tags` - A mapping of tags assigned to the Shared Image.
 
 ---
